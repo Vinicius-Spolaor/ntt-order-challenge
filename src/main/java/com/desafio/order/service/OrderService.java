@@ -69,8 +69,6 @@ public class OrderService implements IOrderService {
         var order = orderRepository.findByOrderId(orderId)
                     .orElseThrow(() -> new OrderNotReceivedException("Order not found with ID: " + orderId));
 
-        OrderDTO orderDTO = new OrderDTO();
-        orderDTO.setOrderId(order.getOrderId());
         var productDTO = order.getProducts().stream()
                          .map(product -> ProductDTO.builder()
                                                  .id(product.getId())
@@ -79,8 +77,11 @@ public class OrderService implements IOrderService {
                                                  .build())
                          .toList();
 
-
-
-        return OrderDTO.builder().orderId(order.getOrderId()).products(productDTO).build();
+        return OrderDTO.builder()
+               .orderId(order.getOrderId())
+               .products(productDTO)
+               .totalValue(order.getTotalValue())
+               .status(order.getStatus())
+               .build();
     }
 }
