@@ -8,6 +8,7 @@ import com.desafio.order.model.Order;
 import com.desafio.order.model.Product;
 import com.desafio.order.repository.OrderRepository;
 import org.springframework.amqp.AmqpRejectAndDontRequeueException;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -17,15 +18,19 @@ import java.math.BigDecimal;
 public class OrderService implements IOrderService {
 
     private final OrderRepository orderRepository;
+    private final RedisTemplate<String, Boolean> redisTemplate;
 
-    public OrderService(OrderRepository orderRepository) {
+    public OrderService(OrderRepository orderRepository, RedisTemplate<String, Boolean> redisTemplate) {
         this.orderRepository = orderRepository;
+        this.redisTemplate = redisTemplate;
     }
 
     @Async
     @Override
     public void processOrder(OrderDTO orderDTO) {
-        if (orderRepository.existsByOrderId(orderDTO.getOrderId())) {
+        var redisKey = "order:" + orderDTO.getOrderId();
+
+        if (redisTemplate.hasKey(redisKey) || orderRepository.existsByOrderId(orderDTO.getOrderId())) {
             throw new AmqpRejectAndDontRequeueException("Duplicate order detected");
         }
 
