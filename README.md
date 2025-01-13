@@ -6,6 +6,11 @@ A aplicação **Order** é responsável por gerenciar pedidos recebidos de forma
 
 ---
 
+## Novo desenho do modelo final
+![novo desenho](https://github.com/user-attachments/assets/b441a3d8-654d-4484-90ed-b1e016d4ec81)
+
+---
+
 ## Tecnologias Utilizadas
 - **Spring Boot**: Framework principal para desenvolvimento da aplicação.
 - **RabbitMQ**: Broker de mensagens para garantir processamento assíncrono.
